@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.js"></script>
+        <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+        <style>
+            .title{font-weight: bold}
+            .me{color: blue}
+            .notme{color:red}
+            .textboxdiv{line-height: 150%}
+        </style>
+    </head>
+    <body>
+        <div class="textboxdiv">
+            <span class="title">닉네임 입력</span> : <input type="text" id="nicknamebox"/>
+            <br>
+            <span class="title">채팅 입력</span> : <input type="text" id="textbox"/>
+        </div>
+        
+        <br>
+        <hr>
+        <br>
+        
+        <div id="text"></div>
+        <script>
+
+            var socket;
+            
+            socket = io.connect('/');
+            socket.on('room',(data)=>{
+                console.log(data);
+                $("#text").append('<span class = "notme">'+data.nickname+' : '+data.text+"</span>"+"<br>");
+            })
+                        
+            $("#textbox").keyup(function(event) {//눌렀을때
+                if (event.which == 13&&!$('#textbox').val()=='') {//엔터키 누름&&빈입력 무시
+                        socket.emit('room',{nickname:$('#nicknamebox').val(),
+                                            text:$('#textbox').val()});//내용 전송
+                        $("#text").append('<span class="me">'+$('#nicknamebox').val()+' : '+$('#textbox').val()+"</span>"+"<br>");//내가보낸 텍스트 추가
+                        $('#textbox').val('');//텍스트 박스 비움
+                }
+            });
+            
+            //            socket.on('connect_failed',()=>{
+//            
+//            });
+//            socket.onbeforeunload = ()=>{
+//                
+//            }
+//            socket.on('disconnect',()=>{
+//                
+//            });
+//            socket.on('room',(data)=>{
+//                console.log(data)
+//            }
+//            
+        </script>
+    </body>
+</html>
