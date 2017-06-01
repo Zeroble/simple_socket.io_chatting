@@ -10,10 +10,20 @@
             .notme{color:red}
             .textboxdiv{line-height: 150%}
         </style>
+        <script>
+            var nickname = prompt('사용할 닉네임을 입력하세요.', '');
+            if(nickname == ''){
+                nickname = "유동 닉네임 "
+                for(var i=0;i<5;i++){
+                    nickname = nickname + (Math.floor(Math.random() * 10));
+                }
+            }
+            console.log(nickname)
+        </script>
     </head>
     <body>
         <div class="textboxdiv">
-            <span class="title">닉네임 입력</span> : <input type="text" id="nicknamebox"/>
+            <div id="showNickName"></div>
             <br>
             <span class="title">채팅 입력</span> : <input type="text" id="textbox"/>
         </div>
@@ -35,9 +45,9 @@
                         
             $("#textbox").keyup(function(event) {//눌렀을때
                 if (event.which == 13&&!$('#textbox').val()=='') {//엔터키 누름&&빈입력 무시
-                        socket.emit('room',{nickname:$('#nicknamebox').val(),
+                        socket.emit('room',{nickname:nickname,
                                             text:$('#textbox').val()});//내용 전송
-                        $("#text").append('<span class="me">'+$('#nicknamebox').val()+' : '+$('#textbox').val()+"</span>"+"<br>");//내가보낸 텍스트 추가
+                        $("#text").append('<span class="me">'+nickname+' : '+$('#textbox').val()+"</span>"+"<br>");//내가보낸 텍스트 추가
                         $('#textbox').val('');//텍스트 박스 비움
                 }
             });
