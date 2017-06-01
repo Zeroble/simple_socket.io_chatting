@@ -23,14 +23,12 @@
     </head>
     <body>
         <div class="textboxdiv">
-            <div id="showNickName"></div>
             <br>
             <span class="title">채팅 입력</span> : <input type="text" id="textbox"/>
         </div>
         
         <br>
         <hr>
-        <br>
         
         <div id="text"></div>
         <script>
@@ -42,6 +40,13 @@
                 console.log(data);
                 $("#text").append('<span class = "notme">'+data.nickname+' : '+data.text+"</span>"+"<br>");
             })
+            
+            
+            $(document).ready(function(){
+                $('#text').append('<span style="font-weight:bold">닉네임 : '+nickname+'</span><br><br>');
+                console.log($('#text').val())
+            })
+                
                         
             $("#textbox").keyup(function(event) {//눌렀을때
                 if (event.which == 13&&!$('#textbox').val()=='') {//엔터키 누름&&빈입력 무시
