@@ -5,7 +5,7 @@ var io = require('socket.io').listen(server)
 server.listen(80)
 
 app.get('/',(req,res)=>{
-  console.log(".....///");
+  console.log("connected");
   res.sendfile(__dirname+'/socket.html')
 });
 

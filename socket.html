@@ -8,7 +8,12 @@
             .title{font-weight: bold}
             .me{color: blue}
             .notme{color:red}
-            .textboxdiv{line-height: 150%}
+            .textboxdiv{
+                line-height: 150%;
+                position:fixed; 
+                left: 10px; 
+                bottom: 10px;
+                z-index:4;}
         </style>
         <script>
             var nickname = prompt('사용할 닉네임을 입력하세요.', '');
@@ -21,35 +26,38 @@
             console.log(nickname)
         </script>
     </head>
-    <body>
+    <body class="asdf">
         <div class="textboxdiv">
             <br>
-            <span class="title">채팅 입력</span> : <input type="text" id="textbox"/>
+            <span class="title">채팅 입력</span> : <input type="text" id="textbox" autofocus/>
         </div>
-        
-        <br>
+        <div id="myNickname">
+        </div>
         <hr>
-        
-        <div id="text"></div>
+        <div id="text" class="msg_panel" style="border:2px solid gray;
+                                                border-radius:5px;
+                                                overflow:auto;
+                                                overflow-x:hidden;"></div>
         <script>
-
             var socket;
             
             socket = io.connect('/');
             socket.on('room',(data)=>{
                 console.log(data);
+                $(".msg_panel").scrollTop($(".msg_panel")[0].scrollHeight);
                 $("#text").append('<span class = "notme">'+data.nickname+' : '+data.text+"</span>"+"<br>");
             })
             
             
             $(document).ready(function(){
-                $('#text').append('<span style="font-weight:bold">닉네임 : '+nickname+'</span><br><br>');
+                $('#myNickname').append('<span style="font-weight:bold">닉네임 : '+nickname+'</span><br><br>');
                 console.log($('#text').val())
             })
                 
                         
             $("#textbox").keyup(function(event) {//눌렀을때
                 if (event.which == 13&&!$('#textbox').val()=='') {//엔터키 누름&&빈입력 무시
+                    $(".msg_panel").scrollTop($(".msg_panel")[0].scrollHeight);
                         socket.emit('room',{nickname:nickname,
                                             text:$('#textbox').val()});//내용 전송
                         $("#text").append('<span class="me">'+nickname+' : '+$('#textbox').val()+"</span>"+"<br>");//내가보낸 텍스트 추가
