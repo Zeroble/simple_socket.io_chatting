@@ -1,95 +1,124 @@
 <!doctype html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.js"></script>
-        <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
-        <style>
-            .title{font-weight: bold;}
-            .me{color: blue}
-            .notme{color:red}
-            .textboxdiv{
-                line-height: 150%;
-                position:fixed; 
-                left: 0px; 
-                bottom: 0px;
-                padding-bottom: 10px;
-                padding-left: 10px;
-                padding-top: 10px;
-                z-index:4;
+
+<head>
+    <meta charset="utf-8">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+    <style>
+        .title {
+            font-weight: bold;
+        }
+        
+        .me {
+            color: blue
+        }
+        
+        .notme {
+            color: red
+        }
+        
+        .textboxdiv {
+            line-height: 150%;
+            position: fixed;
+            left: 0px;
+            bottom: 0px;
+            padding-bottom: 10px;
+            padding-left: 10px;
+            padding-top: 10px;
+            z-index: 4;
             background-color: white;
-            display:block}
-            #textbox{
-                width: 800px
+            display: block
+        }
+        
+        #textbox {
+            width: 800px
+        }
+        .scrolldiv{
+            margin-bottom: 50px
+        }
+        #text {
+            display: block;
+            background-color: white;
+        }
+    </style>
+    <script>
+        var nickname = prompt('사용할 닉네임을 입력하세요.', '');
+        if (nickname == '') {
+            nickname = "유동 닉네임 "
+            for (var i = 0; i < 5; i++) {
+                nickname = nickname + (Math.floor(Math.random() * 10));
             }
-            #text{
-                padding-bottom: 100px;
-                    display:block;
-                background-color: white;
-            }
-        </style>
-        <script>
-            var nickname = prompt('사용할 닉네임을 입력하세요.', '');
-            if(nickname == ''){
-                nickname = "유동 닉네임 "
-                for(var i=0;i<5;i++){
-                    nickname = nickname + (Math.floor(Math.random() * 10));
-                }
-            }
-            console.log(nickname+"entered")
-        </script>
-    </head>
-    <body class="asdf">
-        <div class="textboxdiv">
-            <span class="title">채팅 입력</span> : <input type="text" id="textbox" autofocus/>
-        </div>
-        <div id="myNickname">
-        </div>
-        <hr>
+        }
+        console.log(nickname + "entered")
+
+    </script>
+</head>
+
+<body class="asdf">    
+    <div class="textboxdiv">
+        <span class="title">채팅 입력</span> : <input type="text" id="textbox" autofocus/>
+    </div>
+    <div id="myNickname"></div>
+    <hr>
+    <div class="scrolldiv">
         <div id="text" class="msg_panel"></div>
+    </div>
     
         <script>
-            var socket;
-            
-            socket = io.connect('/');
-            socket.on('room',(data)=>{
-                console.log(data);
-                $(".msg_panel").scrollTop($(".msg_panel")[0].scrollHeight);
-                $("#text").append('<span class = "notme">'+data.nickname+' : '+data.text+"</span>"+"<br>");
-            })
-            
-            
-            $(document).ready(function(){
-                $('#myNickname').append('<span style="font-weight:bold">닉네임 : '+nickname+'</span><br><br>');
-                socket.emit('room',{nickname:"",text:nickname+" is entered."});0
-                console.log($('#text').val())
-            })
-            
-            
-                        
-            $("#textbox").keyup(function(event) {//눌렀을때
-                if (event.which == 13&&!$('#textbox').val()=='') {//엔터키 누름&&빈입력 무시
-                    $(".msg_panel").scrollTop($(".msg_panel")[0].scrollHeight);
-                        socket.emit('room',{nickname:nickname,
-                                            text:$('#textbox').val()});//내용 전송
-                        $("#text").append('<span class="me">'+nickname+' : '+$('#textbox').val()+"</span>"+"<br>");//내가보낸 텍스트 추가
-                        $('#textbox').val('');//텍스트 박스 비움
-                }
+        var socket;
+
+        socket = io.connect('/');
+        socket.on('room', (data) => {
+            console.log(data);
+            $(".scrolldiv").append('<div class = "notme">' + data.nickname + ' : ' + data.text + "</div>");
+            console.log($('.asdf').prop('scrollHeight')+"     "+$('.scrolldiv').height());
+            if ($('.asdf').prop('scrollHeight') >= $('.scrolldiv').height()){    
+                console.log("asdfsadfasdfasdf!!!!")
+                $('.asdf').scrollTop($('.scrolldiv').prop('scrollHeight'));
+            }
+        })
+
+
+        $(document).ready(function() {
+            $('#myNickname').append('<span style="font-weight:bold">닉네임 : ' + nickname + '</span><br><br>');
+            socket.emit('room', {
+                nickname: nickname,
+                text: nickname + " is entered."
             });
-            
-            //            socket.on('connect_failed',()=>{
-//            
-//            });
-//            socket.onbeforeunload = ()=>{
-//                
-//            }
-//            socket.on('disconnect',()=>{
-//                
-//            });
-//            socket.on('room',(data)=>{
-//                console.log(data)
-//            }
-//            
-        </script>
-    </body>
+            console.log($('#text').val())
+        })
+
+
+
+        $("#textbox").keyup(function(event) { //눌렀을때
+            if (event.which == 13 && !$('#textbox').val() == '') { //엔터키 누름&&빈입력 무시
+                $(".msg_panel").scrollTop($(".msg_panel")[0].scrollHeight);
+                socket.emit('room', {nickname: nickname,text: $('#textbox').val()}); //내용 전송
+                $(".scrolldiv").append('<div class="me">' + nickname + ' : ' + $('#textbox').val() + "</div>"); //내가보낸 텍스트 추가
+                $('#textbox').val(''); //텍스트 박스 비움
+                $('.asdf').scrollTop($('.scrolldiv').prop('scrollHeight'));
+
+            }
+        });
+    </script>
+    
+</body>
+
 </html>
+
+<!--
+
+        //            socket.on('connect_failed',()=>{
+        //            
+        //            });
+        //            socket.onbeforeunload = ()=>{
+        //                
+        //            }
+        //            socket.on('disconnect',()=>{
+        //                
+        //            });
+        //            socket.on('room',(data)=>{
+        //                console.log(data)
+        //            }
+        //-->
